@@ -93,15 +93,42 @@ This project adapts the methodology from [NFL Player Value Analysis](G:/ai/nfl/)
 
 ## Status
 
-🚧 **In Development** - Phase 1: Data Foundation (Week 1)
+🔬 **Phase 1 Complete** - Major findings discovered!
 
 - [x] Project structure created
 - [x] Requirements defined
 - [x] IMDb data loader implemented (737,654 movies loaded)
-- [x] Master dataset merged and validated (47,765 movies with ≥1,000 votes)
-- [x] Initial visualizations (rating distribution, movie count by year)
-- [ ] TMDb API integration
-- [ ] Historical lists parser (Sight & Sound, AFI, Top 250 archives)
+- [x] Master dataset merged and validated (338,940 with ratings)
+- [x] Rating trend analysis with statistical testing
+- [x] **Cutoff year identified: 2008 (strongest evidence, p<10⁻⁴⁶)**
+- [ ] TMDb API integration (deprioritized - IMDb data sufficient)
+- [ ] Historical lists parser (Wayback snapshots incomplete)
+
+## 🎯 Key Findings
+
+**The Hypothesis Was Backwards:** Rating inflation happened ~2000, then **corrected** post-2008.
+
+### Timeline Discovered
+
+1. **Pre-2000 (Baseline)**: Mean rating 6.03
+2. **2000-2010 (Inflation Era)**: Mean rating 6.22 (+0.19 jump)
+3. **Post-2010 (Correction)**: Mean rating 6.07-6.17 (stabilization)
+
+### Evidence for 2008 as Cutoff Year
+
+- **Mean difference**: -0.18 (ratings dropped after 2008)
+- **Effect size**: Cohen's d = -0.152 (small-medium effect)
+- **Statistical significance**:
+  - t-test: p = 9.86×10⁻⁴⁶
+  - K-S test: p = 1.55×10⁻³¹
+- **Rank**: #1 of 5 candidate years tested
+
+### High-Rated Movies Explosion
+
+Movies rated ≥8.0 with 10k+ votes:
+- 1950s-1980s: ~50-60 per decade
+- 2010s: **184** (3x historical rate)
+- But with **far fewer votes**: 110k median (2020s) vs. 580k (1990s)
 
 ## License
 

@@ -150,6 +150,34 @@ value_score = objective_quality_zscore - current_rating_zscore
 4. **Verify before proceeding**: Each phase has verification steps - don't skip them
 5. **Document surprises**: If findings contradict expectations, document in `tasks/lessons.md`
 
+## Major Findings (2026-02-11)
+
+### Cutoff Year: 2008 (Strongest Statistical Evidence)
+
+**Counter-Intuitive Result:** Ratings **decreased** after 2008, not increased. The inflation happened BEFORE 2000, and 2008 marks a **correction/stabilization** period.
+
+**Timeline:**
+- **Pre-2000**: Mean 6.03 (baseline era)
+- **2000-2010**: Mean 6.22 (inflation era, +0.19 jump)
+- **Post-2010**: Mean 6.07-6.17 (correction era)
+
+**Statistical Evidence for 2008:**
+- Mean difference: -0.18 (p < 10⁻⁴⁶, Cohen's d = -0.152)
+- Ranked #1 of 5 candidate years (2000/2008/2012/2018/2020)
+- Both t-test and K-S test show extremely significant regime change
+
+**High-Rated Movies (≥8.0):**
+- Historical: 50-60 per decade (1950s-1980s)
+- 2010s: 184 (3x increase)
+- But with far fewer votes: 110k median (2020s) vs. 580k (1990s)
+- **Interpretation**: More movies achieving high ratings with less scrutiny = quality dilution
+
+**Implication:** The manipulation was the 2000-2010 inflation, likely driven by:
+- Broader internet access (more casual voters)
+- Review bombing/coordination campaigns emerging
+- Platform changes encouraging higher ratings
+- Digital revolution democratizing access (more voters, less discriminating)
+
 ## Success Metrics
 
 - [ ] Master dataset with >50k films and complete ratings
