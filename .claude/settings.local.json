@@ -16,7 +16,8 @@
       "Bash(gh repo create:*)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd historical lists parser with Wayback Machine integration\n\nImplement parser to fetch IMDb Top 250 snapshots from different years.\nSuccessfully extracted 25 movies from 2024 snapshot with IMDb IDs.\nWayback snapshots appear paginated \\(only returned 25/250 movies\\).\n\nNext: Create analysis using master IMDb dataset to track rating trends\nover time instead of relying on incomplete Wayback snapshots.\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git push:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(Correction\" - Ready for Medium publication with proper attribution.\n\nAll figures exported as 300 DPI PNG + PDF for publication.\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }
