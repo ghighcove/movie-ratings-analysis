@@ -13,7 +13,10 @@
       "Bash(gh auth:*)",
       "Bash(git add:*)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial commit: Movie ratings manipulation analysis project\n\nAdd data foundation for analyzing rating inflation and manipulation across\n5 candidate cutoff years \\(2000, 2008, 2012, 2018, 2020\\). Implements IMDb\ndataset loader with chunked reading to handle 200+ MB files.\n\n- Data loader with parquet caching \\(737,654 movies, 47,765 with 1k+ votes\\)\n- First notebook for data acquisition and exploration\n- Project structure with docs, requirements, and task tracking\n- Verified IMDb datasets URL \\(datasets.imdbws.com\\)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
-      "Bash(gh repo create:*)"
+      "Bash(gh repo create:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd historical lists parser with Wayback Machine integration\n\nImplement parser to fetch IMDb Top 250 snapshots from different years.\nSuccessfully extracted 25 movies from 2024 snapshot with IMDb IDs.\nWayback snapshots appear paginated \\(only returned 25/250 movies\\).\n\nNext: Create analysis using master IMDb dataset to track rating trends\nover time instead of relying on incomplete Wayback snapshots.\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(git commit:*)"
     ]
   }
 }
