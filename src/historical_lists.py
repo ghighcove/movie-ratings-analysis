@@ -344,6 +344,194 @@ def analyze_list_overlap(snapshots: Dict[int, pd.DataFrame]) -> pd.DataFrame:
     return pd.DataFrame(results)
 
 
+def track_top250_volatility(
+    years_range: tuple = (2019, 2024),
+    quarters: List[tuple] = None
+) -> pd.DataFrame:
+    """
+    Track Top 250 volatility for recent films (flash campaigns vs. sustained presence).
+
+    Fetches quarterly snapshots and calculates stability scores for films.
+
+    Args:
+        years_range: (start_year, end_year) for analysis period
+        quarters: List of (year, month, day) tuples for snapshots (default: quarterly)
+
+    Returns:
+        DataFrame with stability metrics for each film
+    """
+    logger.info(f"Tracking Top 250 volatility for {years_range[0]}-{years_range[1]}...")
+
+    # Default: quarterly snapshots (March, June, Sept, Dec)
+    if quarters is None:
+        quarters = []
+        for year in range(years_range[0], years_range[1] + 1):
+            for month in [3, 6, 9, 12]:
+                quarters.append((year, month, 31 if month in [3, 12] else 30))
+
+    logger.info(f"Fetching {len(quarters)} quarterly snapshots...")
+
+    # Fetch all snapshots
+    snapshots = {}
+    for year, month, day in quarters:
+        snapshot_key = f"{year}Q{(month-1)//3 + 1}"
+
+        # Get Wayback snapshot
+        snapshot_url = get_wayback_snapshot(IMDB_TOP250_URL, year, month, day)
+        if not snapshot_url:
+            logger.warning(f"No snapshot found for {snapshot_key}")
+            continue
+
+        # Fetch and parse HTML
+        html_cache = f"imdb_top250_{year}_{month:02d}.html"
+        html = fetch_snapshot_html(snapshot_url, html_cache)
+        if not html:
+            logger.warning(f"Could not fetch HTML for {snapshot_key}")
+            continue
+
+        movies = parse_imdb_top250(html)
+        if movies:
+            snapshots[snapshot_key] = pd.DataFrame(movies)
+            logger.info(f"  {snapshot_key}: {len(movies)} movies")
+
+        time.sleep(1)  # Be nice to Wayback Machine
+
+    if not snapshots:
+        logger.error("No snapshots fetched!")
+        return pd.DataFrame()
+
+    logger.info(f"Successfully fetched {len(snapshots)} snapshots")
+
+    # Calculate stability metrics for each film
+    all_films = set()
+    for df in snapshots.values():
+        all_films.update(df['imdb_id'].tolist())
+
+    logger.info(f"Tracking {len(all_films)} unique films across snapshots...")
+
+    results = []
+    for imdb_id in all_films:
+        # Find all appearances
+        appearances = []
+        for snapshot_key, df in snapshots.items():
+            if imdb_id in df['imdb_id'].values:
+                row = df[df['imdb_id'] == imdb_id].iloc[0]
+                appearances.append({
+                    'snapshot': snapshot_key,
+                    'rank': row['rank'],
+                    'title': row['title'],
+                    'year': row.get('year')
+                })
+
+        if not appearances:
+            continue
+
+        # Calculate metrics
+        num_appearances = len(appearances)
+        total_snapshots = len(snapshots)
+        stability_score = num_appearances / total_snapshots
+
+        # Identify entry and exit
+        snapshot_keys = sorted(snapshots.keys())
+        first_appearance = min([a['snapshot'] for a in appearances])
+        last_appearance = max([a['snapshot'] for a in appearances])
+
+        first_idx = snapshot_keys.index(first_appearance)
+        last_idx = snapshot_keys.index(last_appearance)
+
+        # Check if it's a flash campaign (appears then quickly disappears)
+        is_flash = num_appearances <= 3 and stability_score < 0.3
+
+        # Check if it yo-yos (appears, disappears, reappears)
+        consecutive_appearances = 0
+        is_yoyo = False
+        if num_appearances > 1 and num_appearances < total_snapshots:
+            # Check for gaps in appearances
+            appearance_indices = [snapshot_keys.index(a['snapshot']) for a in appearances]
+            gaps = [appearance_indices[i+1] - appearance_indices[i] - 1
+                   for i in range(len(appearance_indices)-1)]
+            is_yoyo = any(gap >= 2 for gap in gaps)  # At least 2-quarter gap
+
+        results.append({
+            'imdb_id': imdb_id,
+            'title': appearances[0]['title'],
+            'year': appearances[0]['year'],
+            'num_appearances': num_appearances,
+            'total_snapshots': total_snapshots,
+            'stability_score': stability_score,
+            'first_appearance': first_appearance,
+            'last_appearance': last_appearance,
+            'duration_quarters': last_idx - first_idx + 1,
+            'is_flash_campaign': is_flash,
+            'is_yoyo': is_yoyo,
+            'avg_rank': sum(a['rank'] for a in appearances) / len(appearances),
+            'best_rank': min(a['rank'] for a in appearances),
+            'worst_rank': max(a['rank'] for a in appearances)
+        })
+
+    results_df = pd.DataFrame(results).sort_values('stability_score', ascending=False)
+
+    logger.info(f"Volatility analysis complete:")
+    logger.info(f"  Flash campaigns: {results_df['is_flash_campaign'].sum()}")
+    logger.info(f"  Yo-yo patterns: {results_df['is_yoyo'].sum()}")
+    logger.info(f"  Sustained presence (>0.7): {(results_df['stability_score'] > 0.7).sum()}")
+
+    return results_df
+
+
+def identify_suspicious_top250_entries(
+    volatility_df: pd.DataFrame,
+    master_df: pd.DataFrame
+) -> pd.DataFrame:
+    """
+    Identify films with suspicious Top 250 patterns + vote data.
+
+    Args:
+        volatility_df: Output from track_top250_volatility()
+        master_df: Master dataset with vote counts
+
+    Returns:
+        DataFrame with suspicious films ranked by suspicion score
+    """
+    # Merge with master dataset to get vote data
+    merged = volatility_df.merge(
+        master_df[['imdb_id', 'imdb_rating', 'num_votes', 'genres']],
+        on='imdb_id',
+        how='left'
+    )
+
+    # Calculate suspicion score
+    # Higher score = more suspicious
+    merged['suspicion_score'] = 0.0
+
+    # Flash campaigns (appear briefly then vanish)
+    merged.loc[merged['is_flash_campaign'], 'suspicion_score'] += 3.0
+
+    # Yo-yo patterns (coordinated voting waves)
+    merged.loc[merged['is_yoyo'], 'suspicion_score'] += 2.0
+
+    # Low stability (<0.3)
+    merged.loc[merged['stability_score'] < 0.3, 'suspicion_score'] += 1.5
+
+    # Low vote count for high ranking (gaming with small voter base)
+    # Films in Top 250 should have substantial votes
+    merged.loc[merged['num_votes'] < 50000, 'suspicion_score'] += 1.0
+    merged.loc[merged['num_votes'] < 20000, 'suspicion_score'] += 2.0
+
+    # Recent films that peaked quickly (suspicious for brand-new releases)
+    merged.loc[
+        (merged['year'] >= 2019) & (merged['stability_score'] < 0.4),
+        'suspicion_score'
+    ] += 1.0
+
+    suspicious = merged[merged['suspicion_score'] >= 3.0].copy()
+    suspicious = suspicious.sort_values('suspicion_score', ascending=False)
+
+    logger.info(f"Identified {len(suspicious)} suspicious Top 250 entries (score >= 3.0)")
+
+    return suspicious
+
+
 if __name__ == "__main__":
     # Test: fetch current Top 250 and one historical snapshot
     print("Testing historical lists fetcher...\n")
