@@ -420,6 +420,319 @@ def generate_all_figures(master: pd.DataFrame, yearly_stats: pd.DataFrame,
     logger.info("  - fig6_decade_summary.png/pdf")
 
 
+def plot_genre_anomalies(genre_results: pd.DataFrame, years_range: tuple = (2019, 2024)):
+    """
+    Bar chart showing genre rating shifts (recent vs. historical).
+
+    Args:
+        genre_results: DataFrame from analyze_genre_anomalies()
+        years_range: (start_year, end_year) for recent period
+    """
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 7))
+
+    # Sort by difference (most inflated first)
+    data = genre_results.sort_values('difference', ascending=False).head(15)
+
+    # Left panel: Mean ratings comparison
+    x = range(len(data))
+    width = 0.35
+
+    bars1 = ax1.barh([i - width/2 for i in x], data['historical_mean'],
+                     width, label='Historical (<2019)', color='steelblue', alpha=0.7)
+    bars2 = ax1.barh([i + width/2 for i in x], data['recent_mean'],
+                     width, label=f'Recent ({years_range[0]}-{years_range[1]})', color='orange', alpha=0.7)
+
+    ax1.set_yticks(x)
+    ax1.set_yticklabels(data['genre'], fontsize=10)
+    ax1.set_xlabel('Mean IMDb Rating', fontsize=12, fontweight='bold')
+    ax1.set_title('Genre Rating Shifts: Recent vs. Historical', fontsize=14, fontweight='bold')
+    ax1.legend(fontsize=11)
+    ax1.grid(alpha=0.3, axis='x')
+
+    # Highlight suspicious genres
+    for i, (idx, row) in enumerate(data.iterrows()):
+        if row['suspicious']:
+            ax1.get_yticklabels()[i].set_color('red')
+            ax1.get_yticklabels()[i].set_weight('bold')
+
+    # Right panel: Effect sizes
+    colors = ['red' if sus else 'gray' for sus in data['suspicious']]
+    bars = ax2.barh(range(len(data)), data['cohens_d'], color=colors, alpha=0.7, edgecolor='black')
+
+    ax2.set_yticks(range(len(data)))
+    ax2.set_yticklabels(data['genre'], fontsize=10)
+    ax2.set_xlabel("Effect Size (Cohen's d)", fontsize=12, fontweight='bold')
+    ax2.set_title('Statistical Significance of Genre Shifts', fontsize=14, fontweight='bold')
+    ax2.grid(alpha=0.3, axis='x')
+    ax2.axvline(0.5, color='orange', linestyle='--', linewidth=2, alpha=0.7, label='Medium effect (0.5)')
+    ax2.axvline(-0.5, color='orange', linestyle='--', linewidth=2, alpha=0.7)
+    ax2.legend(fontsize=10)
+
+    # Add annotation for Documentary
+    if 'Documentary' in data['genre'].values:
+        doc_idx = data[data['genre'] == 'Documentary'].index[0]
+        doc_pos = data['genre'].tolist().index('Documentary')
+        ax2.annotate('Highly Suspicious', xy=(data.loc[doc_idx, 'cohens_d'], doc_pos),
+                    xytext=(data.loc[doc_idx, 'cohens_d'] + 0.3, doc_pos),
+                    arrowprops=dict(arrowstyle='->', color='red', lw=2),
+                    fontsize=11, fontweight='bold', color='red')
+
+    plt.tight_layout()
+    save_figure(fig, 'fig7_genre_anomalies')
+    plt.close()
+
+
+def plot_benford_violations(benford_results: dict):
+    """
+    Chart showing Benford's Law violations in vote counts.
+
+    Args:
+        benford_results: Dictionary from detect_vote_clustering()
+    """
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 7))
+
+    # Left panel: Benford's Law comparison
+    digits = np.arange(1, 10)
+    expected = benford_results['benford_expected']
+    observed = benford_results['benford_observed']
+
+    x = np.arange(len(digits))
+    width = 0.35
+
+    bars1 = ax1.bar(x - width/2, expected, width, label='Benford Expected', color='green', alpha=0.7)
+    bars2 = ax1.bar(x + width/2, observed, width, label='Observed', color='red', alpha=0.7)
+
+    ax1.set_xlabel('First Digit', fontsize=12, fontweight='bold')
+    ax1.set_ylabel('Percentage (%)', fontsize=12, fontweight='bold')
+    ax1.set_title("Benford's Law Test: First Digit Distribution\n" +
+                  f"χ²={benford_results['chi2_statistic']:.2f}, p={benford_results['p_value']:.4f}",
+                  fontsize=14, fontweight='bold')
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(digits)
+    ax1.legend(fontsize=11)
+    ax1.grid(alpha=0.3, axis='y')
+
+    # Add verdict text
+    verdict_color = 'red' if benford_results['manipulation_probability'] == 'HIGH' else 'orange'
+    ax1.text(0.5, 0.95, f"Manipulation Risk: {benford_results['manipulation_probability']}",
+             transform=ax1.transAxes, fontsize=13, fontweight='bold',
+             color=verdict_color, ha='center', va='top',
+             bbox=dict(boxstyle='round', facecolor='yellow', alpha=0.5))
+
+    # Right panel: Round-number clustering
+    round_nums = list(benford_results['round_number_counts'].keys())
+    counts = list(benford_results['round_number_counts'].values())
+
+    bars = ax2.bar(range(len(round_nums)), counts, color='darkred', alpha=0.7, edgecolor='black')
+    ax2.set_xticks(range(len(round_nums)))
+    ax2.set_xticklabels([f'{n:,}' for n in round_nums], rotation=45, ha='right', fontsize=10)
+    ax2.set_xlabel('Vote Count Threshold', fontsize=12, fontweight='bold')
+    ax2.set_ylabel('Number of Movies', fontsize=12, fontweight='bold')
+    ax2.set_title(f'Round-Number Clustering: {benford_results["total_round_numbers"]:,} Movies\n' +
+                  f'({benford_results["clustering_ratio"]:.1f}x Expected Random)',
+                  fontsize=14, fontweight='bold')
+    ax2.grid(alpha=0.3, axis='y')
+
+    # Add values on bars
+    for bar, val in zip(bars, counts):
+        height = bar.get_height()
+        if val > 0:
+            ax2.text(bar.get_x() + bar.get_width()/2, height + max(counts)*0.02,
+                    f'{val:,}', ha='center', fontsize=10, fontweight='bold')
+
+    plt.tight_layout()
+    save_figure(fig, 'fig8_benford_violations')
+    plt.close()
+
+
+def plot_franchise_coordination(franchise_results: pd.DataFrame):
+    """
+    Bar chart comparing franchise vs. standalone film ratings by genre.
+
+    Args:
+        franchise_results: DataFrame from detect_franchise_coordination()
+    """
+    fig, ax = plt.subplots(figsize=(12, 8))
+
+    data = franchise_results.sort_values('difference', ascending=True)
+
+    # Create grouped bar chart
+    x = range(len(data))
+    width = 0.35
+
+    bars1 = ax.barh([i - width/2 for i in x], data['standalone_mean'],
+                    width, label='Standalone Films', color='steelblue', alpha=0.7)
+    bars2 = ax.barh([i + width/2 for i in x], data['franchise_mean'],
+                    width, label='Franchise Films', color='orange', alpha=0.7)
+
+    ax.set_yticks(x)
+    ax.set_yticklabels(data['genre'], fontsize=11)
+    ax.set_xlabel('Mean IMDb Rating', fontsize=12, fontweight='bold')
+    ax.set_title('Franchise Coordination: Franchise vs. Standalone Films (2019-2024)\n' +
+                 'Do Studios Coordinate Franchise Ratings?',
+                 fontsize=14, fontweight='bold', pad=20)
+    ax.legend(fontsize=11)
+    ax.grid(alpha=0.3, axis='x')
+
+    # Highlight suspicious genres
+    for i, (idx, row) in enumerate(data.iterrows()):
+        if row['suspicious']:
+            # Add arrow annotation
+            ax.annotate(f'+{row["difference"]:.2f}',
+                       xy=(row['franchise_mean'], i + width/2),
+                       xytext=(row['franchise_mean'] + 0.3, i + width/2),
+                       arrowprops=dict(arrowstyle='->', color='red', lw=2),
+                       fontsize=10, fontweight='bold', color='red')
+
+    # Add count information
+    for i, (idx, row) in enumerate(data.iterrows()):
+        ax.text(5.5, i, f'n={row["franchise_count"]}/{row["standalone_count"]}',
+               fontsize=9, color='gray', va='center')
+
+    plt.tight_layout()
+    save_figure(fig, 'fig9_franchise_coordination')
+    plt.close()
+
+
+def plot_documentary_manipulation(doc_results: dict):
+    """
+    Visualization of documentary genre manipulation evidence.
+
+    Args:
+        doc_results: Dictionary from analyze_documentary_manipulation()
+    """
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 7))
+
+    # Left panel: Rating comparison
+    categories = ['Historical\n(<2019)', 'Recent\n(2019-2024)']
+    means = [doc_results['historical_mean_rating'], doc_results['recent_mean_rating']]
+    colors = ['steelblue', 'orange']
+
+    bars = ax1.bar(categories, means, color=colors, alpha=0.7, edgecolor='black', width=0.5)
+    ax1.set_ylabel('Mean IMDb Rating', fontsize=12, fontweight='bold')
+    ax1.set_title('Documentary Genre: Historical vs. Recent\n' +
+                  f"Mean Rating Increase: +{doc_results['recent_mean_rating'] - doc_results['historical_mean_rating']:.2f}",
+                  fontsize=14, fontweight='bold')
+    ax1.grid(alpha=0.3, axis='y')
+    ax1.set_ylim(6.5, 7.5)
+
+    # Add values on bars
+    for bar, val in zip(bars, means):
+        height = bar.get_height()
+        ax1.text(bar.get_x() + bar.get_width()/2, height + 0.05, f'{val:.2f}',
+                ha='center', fontsize=12, fontweight='bold')
+
+    # Add significance annotation
+    ax1.text(0.5, 0.95, f"p-value: {doc_results['p_value']:.6f}",
+            transform=ax1.transAxes, fontsize=11, fontweight='bold',
+            ha='center', va='top',
+            bbox=dict(boxstyle='round', facecolor='yellow', alpha=0.5))
+
+    # Right panel: Vote efficiency
+    categories2 = ['Historical', 'Recent']
+    efficiency = [doc_results['historical_efficiency'], doc_results['recent_efficiency']]
+
+    bars2 = ax2.bar(categories2, efficiency, color=colors, alpha=0.7, edgecolor='black', width=0.5)
+    ax2.set_ylabel('Vote Efficiency\n(Rating per 1000 votes)', fontsize=12, fontweight='bold')
+    ax2.set_title('Documentary Vote Efficiency: Are Ratings Artificially High?\n' +
+                  f"Efficiency Boost: +{doc_results['efficiency_boost']:.2f}",
+                  fontsize=14, fontweight='bold')
+    ax2.grid(alpha=0.3, axis='y')
+
+    # Add values on bars
+    for bar, val in zip(bars2, efficiency):
+        height = bar.get_height()
+        ax2.text(bar.get_x() + bar.get_width()/2, height + 0.05, f'{val:.2f}',
+                ha='center', fontsize=12, fontweight='bold')
+
+    # Add suspicious count
+    ax2.text(0.5, 0.05, f"Suspicious Docs: {doc_results['suspicious_count']}/{doc_results['total_recent_docs']}",
+            transform=ax2.transAxes, fontsize=11, fontweight='bold',
+            ha='center', va='bottom', color='red',
+            bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.8))
+
+    plt.tight_layout()
+    save_figure(fig, 'fig10_documentary_manipulation')
+    plt.close()
+
+
+def plot_manipulation_summary(
+    genre_results: pd.DataFrame,
+    benford_results: dict,
+    franchise_results: pd.DataFrame,
+    doc_results: dict
+):
+    """
+    4-panel summary figure showing all manipulation evidence.
+
+    Args:
+        genre_results: Genre anomaly analysis
+        benford_results: Benford test results
+        franchise_results: Franchise coordination results
+        doc_results: Documentary manipulation results
+    """
+    fig = plt.figure(figsize=(16, 12))
+    gs = fig.add_gridspec(2, 2, hspace=0.3, wspace=0.3)
+
+    # Panel 1: Genre anomalies (top suspicious)
+    ax1 = fig.add_subplot(gs[0, 0])
+    top_genres = genre_results.nlargest(8, 'cohens_d')
+    colors1 = ['red' if sus else 'gray' for sus in top_genres['suspicious']]
+    ax1.barh(range(len(top_genres)), top_genres['cohens_d'], color=colors1, alpha=0.7)
+    ax1.set_yticks(range(len(top_genres)))
+    ax1.set_yticklabels(top_genres['genre'], fontsize=10)
+    ax1.set_xlabel("Cohen's d", fontsize=11, fontweight='bold')
+    ax1.set_title('Genre Anomalies (2019-2024)', fontsize=12, fontweight='bold')
+    ax1.grid(alpha=0.3, axis='x')
+    ax1.axvline(0.5, color='orange', linestyle='--', alpha=0.7)
+
+    # Panel 2: Benford violations
+    ax2 = fig.add_subplot(gs[0, 1])
+    digits = np.arange(1, 10)
+    width = 0.35
+    x = np.arange(9)
+    ax2.bar(x - width/2, benford_results['benford_expected'], width, label='Expected', color='green', alpha=0.7)
+    ax2.bar(x + width/2, benford_results['benford_observed'], width, label='Observed', color='red', alpha=0.7)
+    ax2.set_xlabel('First Digit', fontsize=11, fontweight='bold')
+    ax2.set_ylabel('Percentage', fontsize=11, fontweight='bold')
+    ax2.set_title(f"Benford's Law (p={benford_results['p_value']:.4f})", fontsize=12, fontweight='bold')
+    ax2.set_xticks(x)
+    ax2.set_xticklabels(digits)
+    ax2.legend(fontsize=9)
+    ax2.grid(alpha=0.3, axis='y')
+
+    # Panel 3: Franchise coordination
+    ax3 = fig.add_subplot(gs[1, 0])
+    top_franchise = franchise_results.nlargest(5, 'difference')
+    colors3 = ['red' if sus else 'gray' for sus in top_franchise['suspicious']]
+    ax3.barh(range(len(top_franchise)), top_franchise['difference'], color=colors3, alpha=0.7)
+    ax3.set_yticks(range(len(top_franchise)))
+    ax3.set_yticklabels(top_franchise['genre'], fontsize=10)
+    ax3.set_xlabel('Rating Boost (Franchise - Standalone)', fontsize=11, fontweight='bold')
+    ax3.set_title('Franchise Coordination by Genre', fontsize=12, fontweight='bold')
+    ax3.grid(alpha=0.3, axis='x')
+    ax3.axvline(0.3, color='orange', linestyle='--', alpha=0.7)
+
+    # Panel 4: Documentary manipulation
+    ax4 = fig.add_subplot(gs[1, 1])
+    categories = ['Historical', 'Recent']
+    means = [doc_results['historical_mean_rating'], doc_results['recent_mean_rating']]
+    bars = ax4.bar(categories, means, color=['steelblue', 'orange'], alpha=0.7, edgecolor='black')
+    ax4.set_ylabel('Mean Rating', fontsize=11, fontweight='bold')
+    ax4.set_title(f'Documentary Inflation (p={doc_results["p_value"]:.4f})', fontsize=12, fontweight='bold')
+    ax4.grid(alpha=0.3, axis='y')
+    for bar, val in zip(bars, means):
+        height = bar.get_height()
+        ax4.text(bar.get_x() + bar.get_width()/2, height + 0.05, f'{val:.2f}',
+                ha='center', fontsize=11, fontweight='bold')
+
+    fig.suptitle('Rating Manipulation Evidence Summary (2019-2024)',
+                 fontsize=16, fontweight='bold', y=0.98)
+
+    save_figure(fig, 'fig11_manipulation_summary')
+    plt.close()
+
+
 if __name__ == "__main__":
     print("Visualization module loaded.")
     print(f"Figures will be saved to: {FIGURES_DIR}/")

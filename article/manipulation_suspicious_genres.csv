@@ -1,0 +1,2 @@
+genre,recent_mean,historical_mean,difference,recent_count,historical_count,t_statistic,p_value,cohens_d,effect_size_label,suspicious
+Western,5.8121212121212125,6.451311475409836,-0.6391902632886239,33,610,-4.1524010320678,0.00020161999511640177,-0.7768310673613164,medium,True

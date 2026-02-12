@@ -1,0 +1,48 @@
+title,year,imdb_rating,expected_rating,rating_boost,num_votes,runtime,genres,china_score
+Mercy Killing,2024.0,8.7,6.6,2.0999999999999996,2687.0,131.0,"['Action', 'Drama', 'Romance']",2
+Mahavatar Narsimha,2024.0,8.5,6.6,1.9000000000000004,45182.0,130.0,"['Action', 'Animation', 'Drama']",2
+The Legend of Maula Jatt,2022.0,8.4,6.6,1.8000000000000007,11615.0,153.0,"['Action', 'Drama', 'Fantasy']",2
+Shershaah,2021.0,8.3,6.6,1.700000000000001,135753.0,135.0,"['Action', 'Biography', 'Drama']",2
+Ayodhi,2023.0,8.2,6.5,1.6999999999999993,4099.0,121.0,"['Action', 'Drama', 'Thriller']",2
+Uri: The Surgical Strike,2019.0,8.2,6.6,1.5999999999999996,80967.0,138.0,"['Action', 'Drama', 'History']",2
+Ranasthali,2022.0,8.2,6.6,1.5999999999999996,1103.0,140.0,"['Action', 'Drama', 'Mystery']",2
+Top Gun: Maverick,2022.0,8.2,6.6,1.5999999999999996,843630.0,130.0,"['Action', 'Drama']",2
+Bachhala Malli,2024.0,8.1,6.6,1.5,4036.0,140.0,"['Action', 'Drama', 'Romance']",2
+Dhagad Saamba,2022.0,7.9,6.5,1.4000000000000004,2121.0,132.0,"['Action', 'Comedy', 'Drama']",2
+1980 Lo Radhekrishna,2024.0,7.9,6.6,1.3000000000000007,1208.0,131.0,"['Action', 'Drama', 'Romance']",2
+Na venta paduthunna chinnadevadamma,2022.0,7.8,6.6,1.2000000000000002,2046.0,121.0,"['Action', 'Drama', 'Romance']",2
+Rocky,2021.0,7.8,6.6,1.2000000000000002,1771.0,129.0,"['Action', 'Drama']",2
+Spark 1.0,2022.0,7.8,6.6,1.2000000000000002,2038.0,134.0,"['Action', 'Drama']",2
+The Promised Land,2023.0,7.7,6.6,1.1000000000000005,39343.0,127.0,"['Action', 'Biography', 'Drama']",2
+Kaiva,2023.0,7.7,6.6,1.1000000000000005,69629.0,138.0,"['Action', 'Drama', 'Romance']",2
+Godzilla Minus One,2023.0,7.7,6.6,1.1000000000000005,199965.0,124.0,"['Action', 'Adventure', 'Drama']",2
+Konda,2022.0,7.7,6.6,1.1000000000000005,2108.0,121.0,"['Action', 'Biography', 'Drama']",2
+Law of Tehran,2019.0,7.7,6.6,1.1000000000000005,20903.0,131.0,"['Action', 'Crime', 'Drama']",2
+Shang-Chi and the Legend of the Ten Rings,2021.0,7.3,6.2,1.0999999999999996,482963.0,132.0,"['Action', 'Adventure', 'Fantasy']",2
+Ardha Shathabdham,2021.0,7.6,6.6,1.0,1852.0,130.0,"['Action', 'Drama', 'Romance']",2
+Naa Nee Prema Katha,2023.0,7.6,6.6,1.0,1509.0,129.0,"['Action', 'Drama', 'Romance']",2
+The Covenant,2023.0,7.5,6.5,1.0,205329.0,123.0,"['Action', 'Drama', 'Thriller']",2
+Tanhaji: The Unsung Warrior,2020.0,7.5,6.6,0.9000000000000004,38491.0,135.0,"['Action', 'Biography', 'Drama']",3
+Nallamala,2022.0,7.5,6.6,0.9000000000000004,1474.0,132.0,"['Action', 'Drama', 'History']",2
+Dungeons & Dragons: Honor Among Thieves,2023.0,7.2,6.3,0.9000000000000004,270885.0,134.0,"['Action', 'Adventure', 'Comedy']",2
+John Wick: Chapter 3 - Parabellum,2019.0,7.4,6.6,0.8000000000000007,474791.0,130.0,"['Action', 'Crime', 'Drama']",2
+Rurouni Kenshin: Final Chapter Part II - The Beginning,2021.0,7.4,6.6,0.8000000000000007,12289.0,137.0,"['Action', 'Adventure', 'Drama']",2
+Home Minister,2022.0,7.4,6.6,0.8000000000000007,1130.0,124.0,"['Action', 'Drama']",2
+Kerosene,2022.0,7.4,6.6,0.8000000000000007,3475.0,120.0,"['Action', 'Crime', 'Drama']",2
+Malikappuram,2022.0,7.4,6.6,0.8000000000000007,6102.0,121.0,"['Action', 'Adventure', 'Drama']",2
+Saani Kaayidham,2022.0,7.4,6.6,0.8000000000000007,4010.0,136.0,"['Action', 'Crime', 'Drama']",2
+Rebel,2022.0,7.3,6.5,0.7999999999999998,2901.0,135.0,"['Action', 'Drama', 'Thriller']",2
+The Forgotten Battle,2020.0,7.1,6.3,0.7999999999999998,40830.0,124.0,"['Action', 'Adventure', 'War']",2
+Dovbush,2023.0,7.3,6.6,0.7000000000000002,2683.0,124.0,"['Action', 'Adventure', 'Drama']",2
+"The Pig, the Snake and the Pigeon",2023.0,7.3,6.6,0.7000000000000002,8347.0,134.0,"['Action', 'Crime', 'Drama']",2
+Twilight of the Warriors: Walled In,2024.0,6.9,6.2,0.7000000000000002,11760.0,126.0,"['Action', 'Crime', 'Thriller']",2
+Vaathi,2023.0,7.3,6.6,0.7000000000000002,11795.0,139.0,"['Action', 'Drama']",2
+Bacurau,2019.0,7.3,6.6,0.7000000000000002,34101.0,131.0,"['Action', 'Adventure', 'Drama']",2
+Driving Licence,2019.0,7.2,6.5,0.7000000000000002,4803.0,135.0,"['Action', 'Comedy', 'Drama']",2
+Maurh,2023.0,7.2,6.6,0.6000000000000005,1573.0,140.0,"['Action', 'Drama', 'History']",2
+Rurouni Kenshin: Final Chapter Part I - The Final,2021.0,7.2,6.6,0.6000000000000005,12015.0,138.0,"['Action', 'Adventure', 'Drama']",2
+Mission Raniganj,2023.0,7.2,6.6,0.6000000000000005,20263.0,134.0,"['Action', 'Biography', 'Drama']",2
+Mura,2024.0,7.2,6.6,0.6000000000000005,7126.0,129.0,"['Action', 'Drama']",2
+Blizzard of Souls,2019.0,7.2,6.6,0.6000000000000005,5597.0,123.0,"['Action', 'Drama', 'History']",2
+Anthima Theerpu,2024.0,7.1,6.5,0.5999999999999996,1557.0,133.0,"['Action', 'Drama', 'Thriller']",2
+Sivappu Manjal Pachai,2019.0,7.1,6.5,0.5999999999999996,2313.0,140.0,"['Action', 'Drama', 'Thriller']",2
