@@ -240,71 +240,46 @@ If all 4 aren't true, it's not done. Don't optimize for your efficiency at the e
 
 ## Medium Publishing Workflow
 
-**CRITICAL: Medium caches imported article URLs by filename aggressively.** Reusing filenames will cause Medium to serve old cached content regardless of file changes.
+**MANDATORY**: Read `G:\ai\medium-publishing-standards\STANDARDS.md` before any Medium work.
 
-### Correct Implementation (Cache-Busting)
+That document is the **single source of truth** for all Medium platform rules. This section provides project-specific quick reference only.
 
-**1. Export with unique timestamped filename:**
+### Quick Workflow (this project)
+
+**1. Export**:
 ```bash
 python scripts/export_for_medium.py article/medium_draft.md
 ```
 
-Generates: `{article_name}_{YYYYMMDD}_{HHMM}_{hash}.html`
-
-Example: `rating_inflation_20260212_1057_a2a9b1bb.html`
-
-**2. Push to GitHub:**
+**2. Push to GitHub** (triggers GitHub Pages rebuild):
 ```bash
-git add article/{unique_filename}.html scripts/export_for_medium.py
+git add article/{unique_filename}.html figures/
 git commit -m "Add Medium export: {article_name}"
 git push origin main
 ```
 
-**3. Wait 30 seconds** for GitHub Pages rebuild
+**3. Import to Medium** (after 30sec GitHub Pages rebuild):
+- URL: `https://medium.com/p/import`
+- Paste: `https://ghighcove.github.io/movie-ratings-analysis/article/{unique_filename}.html`
+- Tags: Data Analysis, Movies, IMDb, Statistics, Film Analysis
 
-**4. Import to Medium:**
-- Navigate to: `https://medium.com/p/import`
-- Enter GitHub Pages URL: `https://ghighcove.github.io/movie-ratings-analysis/article/{unique_filename}.html`
-- Click "Import"
-- Add tags: Data Analysis, Movies, IMDb, Statistics, Film Analysis
-
-**Why This Works:**
-- Every export gets a unique filename (timestamp + content hash)
-- Medium cannot serve cached version (new URL every time)
-- Enables immediate re-imports after fixes
-- **Never reuse `*_medium_ready.html` pattern** - always generate unique filename
-
-**Image URLs:**
-- Always use GitHub Pages URLs: `https://ghighcove.github.io/movie-ratings-analysis/figures/fig.png`
-- Never use raw.githubusercontent.com (serves text/plain, Medium rejects)
-
-**CRITICAL: Tables Must Be PNG Images, NOT HTML `<table>` Tags**
-- Medium does NOT render HTML tables properly (columns run together, formatting breaks)
-- **ALWAYS** render tables as styled PNG images using matplotlib and embed as `<img>` tags
-- This was proven in the NFL project (documented in `G:\ai\nfl\CLAUDE.md` lines 142-148 and `G:\ai\nfl\tasks\lessons.md` lines 96-106)
-- Pattern: generate PNG with `matplotlib.pyplot.table()`, save to `figures/table_*.png`, reference in markdown as `![Table description](../figures/table_*.png)`
-- The export script will convert the image reference to a GitHub Pages absolute URL automatically
-
-### Complete Medium Platform Rules (duplicated from NFL project)
-- Medium does NOT render HTML `<table>` tags — always use PNG table images
-- PNG table images: use `matplotlib.pyplot.table()`, save to `figures/table_*.png`
-- Alt text format: "Table visualization showing [detailed description of data]"
-- Wrap all images in `<p>` tags for Medium compatibility
-- Use Python `markdown` library with `extensions=['tables', 'fenced_code']` — but intercept tables BEFORE conversion (replace with image references in the markdown source, not in the HTML output)
-- Medium caches aggressively by URL path — always use unique timestamped filenames
-- Medium ONLY accepts GitHub Pages URLs for article import (not raw.githubusercontent.com)
-- Images within articles can use either GitHub Pages or raw.githubusercontent.com URLs
-- When debugging Medium imports: cache first, content second (always try a new filename before debugging content)
-- Full HTML document structure required: `<!DOCTYPE html>`, `<html>`, `<head>` with charset, `<body>`
-
-**Verification:**
+**4. After publishing, archive for portfolio**:
 ```bash
-# Verify GitHub Pages URL is live
-curl -I https://ghighcove.github.io/movie-ratings-analysis/article/{unique_filename}.html
-# Should return: HTTP/2 200
+python G:/ai/medium-publishing-standards/tools/archive_article.py \
+  --source="G:/ai/entertainment_metrics/ratings/article/medium_draft.md" \
+  --medium-url="https://medium.com/..." \
+  --project="ratings" \
+  --title="Article Title" \
+  --geo-score="97"
 ```
 
-**This pattern was discovered in the NFL project but never implemented there.** We're applying it correctly here.
+### Critical Rules (see STANDARDS.md for full details)
+
+- ✅ Tables = PNG images (not HTML `<table>` tags)
+- ✅ Unique timestamped filenames (bypass Medium caching)
+- ✅ GitHub Pages URLs (not raw.githubusercontent.com)
+- ✅ Full HTML document structure (DOCTYPE, html, head, body)
+- ✅ Python `markdown` library (not regex)
 
 ## Success Metrics
 
