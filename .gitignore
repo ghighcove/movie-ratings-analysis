@@ -2,6 +2,7 @@
 data/raw/*.gz
 data/raw/*.tsv
 data/processed/*.parquet
+data/processed/tmdb_cache/
 data/cache/*
 
 # Keep directory structure
