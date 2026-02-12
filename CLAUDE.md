@@ -43,6 +43,28 @@ This project tests the hypothesis that movie ratings became manipulated or untet
 
 ## Verified Workflows
 
+### HTML Report Generation
+**CRITICAL RULE**: HTML reports MUST include embedded visualizations, not just text.
+
+When creating HTML reports for user review:
+- Use base64 encoding to embed images directly in HTML (makes files self-contained)
+- OR use relative paths to image files if keeping images separate
+- NEVER create text-only HTML reports - they're incomplete and not useful
+- Each visualization should have a caption explaining what it shows
+
+**Pattern:**
+```python
+import base64
+
+def embed_image(img_path):
+    with open(img_path, 'rb') as f:
+        img_data = base64.b64encode(f.read()).decode('utf-8')
+    return f"data:image/png;base64,{img_data}"
+
+# In HTML template:
+html += f'<img src="{embed_image("figures/chart.png")}" alt="Chart description">'
+```
+
 ### Data Loading Pattern (Adapted from NFL Project)
 ```python
 def _load_or_fetch(name: str, fetch_fn, force_refresh=False):
@@ -149,6 +171,44 @@ value_score = objective_quality_zscore - current_rating_zscore
 3. **Modularize reusable code**: Move validated notebook code to `src/` modules
 4. **Verify before proceeding**: Each phase has verification steps - don't skip them
 5. **Document surprises**: If findings contradict expectations, document in `tasks/lessons.md`
+
+## Quality Consistency Rules
+
+### Multiple Similar Outputs
+**CRITICAL**: When creating multiple similar outputs (2+ articles, reports, analyses), you MUST maintain consistent quality across ALL outputs.
+
+- If you find yourself taking shortcuts on the 2nd+ item because:
+  - "I'm tired"
+  - "This one is longer"
+  - "I already did one well"
+  - "Technically this meets the requirement"
+
+  **STOP. Ask the user**: "I notice [item 2] is [longer/more complex/etc]. Should I apply the same detailed approach as [item 1], or is a simpler format acceptable?"
+
+### The "Would I Read This?" Test
+Before delivering HTML reports or any user-facing documents, ask yourself:
+
+- Would I want to read this document myself?
+- Would I find the visualization placement helpful or frustrating?
+- Am I optimizing for task completion or user value?
+
+If the answer to any is "no" or "unsure," **ask the user** before delivering.
+
+### No Shortcuts Without Permission
+If you're tempted to take a shortcut that reduces quality (even if technically meeting requirements):
+
+1. **Recognize the temptation** - "I could do X the quick way..."
+2. **Ask explicitly**: "For [task], I could do [full approach] or [shortcut]. The shortcut would [specific tradeoff]. Which do you prefer?"
+3. **Never assume shortcuts are acceptable** just because they technically work
+
+### Task Completion ≠ Task Done Right
+"Done" means:
+- ✅ Meets technical requirements
+- ✅ Serves user's actual needs
+- ✅ Maintains quality standards across all deliverables
+- ✅ You'd be proud to show it
+
+If all 4 aren't true, it's not done. Don't optimize for your efficiency at the expense of user value.
 
 ## Major Findings (2026-02-11)
 

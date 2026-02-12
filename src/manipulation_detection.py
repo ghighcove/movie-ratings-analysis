@@ -140,6 +140,9 @@ def detect_vote_clustering(
     # Filter to recent years
     recent = master_df[master_df['year'].between(*years_range)].copy()
 
+    # Filter out NaN vote counts first
+    recent = recent[recent['num_votes'].notna()].copy()
+
     # Extract first digit (exclude zeros)
     recent['first_digit'] = recent['num_votes'].astype(str).str[0].astype(int)
     recent = recent[recent['first_digit'] > 0]
