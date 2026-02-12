@@ -82,13 +82,7 @@ After 2008, ratings began returning toward historical baselines. The correction 
 
 Perhaps the most striking finding is the explosion of movies rated ≥8.0:
 
-| Era | Count (≥8.0 rating, ≥10k votes) | Median Votes |
-|-----|----------------------------------|--------------|
-| 1950s-1980s | ~50-60 per decade | 140k-260k |
-| 1990s | 92 | 580k |
-| 2000s | 124 | 469k |
-| **2010s** | **184** | **310k** |
-| 2020s | 97 (incomplete) | **110k** |
+![Table visualization showing high-rated movies by era. 1950s-1980s had 50-60 per decade with 140k-260k median votes. 1990s had 92 with 580k votes. 2000s had 124 with 469k. 2010s exploded to 184 with only 310k. 2020s has 97 incomplete with just 110k median votes.](../figures/table_high_rated_movies_by_era.png)
 
 **The 2010s produced 3× more "great" movies than the 1950s** — but with far less scrutiny. The median vote count for high-rated 2020s films is just **110k**, compared to **580k** in the 1990s.
 
