@@ -285,6 +285,18 @@ git push origin main
 - Pattern: generate PNG with `matplotlib.pyplot.table()`, save to `figures/table_*.png`, reference in markdown as `![Table description](../figures/table_*.png)`
 - The export script will convert the image reference to a GitHub Pages absolute URL automatically
 
+### Complete Medium Platform Rules (duplicated from NFL project)
+- Medium does NOT render HTML `<table>` tags — always use PNG table images
+- PNG table images: use `matplotlib.pyplot.table()`, save to `figures/table_*.png`
+- Alt text format: "Table visualization showing [detailed description of data]"
+- Wrap all images in `<p>` tags for Medium compatibility
+- Use Python `markdown` library with `extensions=['tables', 'fenced_code']` — but intercept tables BEFORE conversion (replace with image references in the markdown source, not in the HTML output)
+- Medium caches aggressively by URL path — always use unique timestamped filenames
+- Medium ONLY accepts GitHub Pages URLs for article import (not raw.githubusercontent.com)
+- Images within articles can use either GitHub Pages or raw.githubusercontent.com URLs
+- When debugging Medium imports: cache first, content second (always try a new filename before debugging content)
+- Full HTML document structure required: `<!DOCTYPE html>`, `<html>`, `<head>` with charset, `<body>`
+
 **Verification:**
 ```bash
 # Verify GitHub Pages URL is live
