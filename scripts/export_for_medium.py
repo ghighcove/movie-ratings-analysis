@@ -16,6 +16,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Tuple
 
+import markdown
+
 
 def generate_unique_filename(article_name: str, html_content: str) -> str:
     """
@@ -38,12 +40,11 @@ def generate_unique_filename(article_name: str, html_content: str) -> str:
 
 def markdown_to_html(markdown_content: str, github_pages_base: str, repo_name: str) -> str:
     """
-    Convert markdown to Medium-compatible HTML.
+    Convert markdown to Medium-compatible HTML using the markdown library.
 
-    Medium requirements:
-    - Images must use absolute URLs (GitHub Pages URLs work)
-    - Images should be wrapped in <p> tags
-    - Basic markdown formatting (headers, bold, italic, links)
+    Pre-processes image URLs to use GitHub Pages absolute URLs, then delegates
+    all markdown→HTML conversion to the markdown library (handles lists, tables,
+    headers, bold, italic, links, etc. correctly).
 
     Args:
         markdown_content: Raw markdown text
@@ -51,77 +52,37 @@ def markdown_to_html(markdown_content: str, github_pages_base: str, repo_name: s
         repo_name: Repository name (e.g., "movie-ratings-analysis")
 
     Returns:
-        HTML string ready for Medium import
+        HTML body content ready for Medium import
     """
-    html = markdown_content
+    md_text = markdown_content
 
-    # Convert markdown images to HTML with GitHub Pages URLs
+    # Pre-process: rewrite image paths to GitHub Pages absolute URLs
     # Pattern: ![caption](../figures/fig.png) or ![caption](figures/fig.png)
-    # Target: <p><img src="https://ghighcove.github.io/movie-ratings-analysis/figures/fig.png" alt="caption"></p>
-    def replace_image(match):
+    def replace_image_url(match):
         alt_text = match.group(1)
         img_path = match.group(2)
-        # Remove leading ../ if present
         if img_path.startswith('../'):
             img_path = img_path[3:]
         github_url = f"{github_pages_base}/{repo_name}/{img_path}"
-        return f'<p><img src="{github_url}" alt="{alt_text}"></p>'
+        return f'![{alt_text}]({github_url})'
 
-    html = re.sub(r'!\[([^\]]*)\]\(([^)]+)\)', replace_image, html)
+    md_text = re.sub(r'!\[([^\]]*)\]\(([^)]+)\)', replace_image_url, md_text)
 
-    # Convert headers
-    html = re.sub(r'^# (.+)$', r'<h1>\1</h1>', html, flags=re.MULTILINE)
-    html = re.sub(r'^## (.+)$', r'<h2>\1</h2>', html, flags=re.MULTILINE)
-    html = re.sub(r'^### (.+)$', r'<h3>\1</h3>', html, flags=re.MULTILINE)
+    # Convert markdown to HTML using the markdown library
+    html = markdown.markdown(
+        md_text,
+        extensions=['tables', 'fenced_code'],
+        output_format='html5'
+    )
 
-    # Convert bold and italic
-    html = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', html)
-    html = re.sub(r'\*(.+?)\*', r'<em>\1</em>', html)
-
-    # Convert links
-    html = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2">\1</a>', html)
-
-    # Convert horizontal rules
-    html = re.sub(r'^---$', r'<hr>', html, flags=re.MULTILINE)
-
-    # Wrap paragraphs (lines that don't start with <)
-    lines = html.split('\n')
-    processed_lines = []
-    in_paragraph = False
-
-    for line in lines:
-        stripped = line.strip()
-
-        # Skip empty lines
-        if not stripped:
-            if in_paragraph:
-                processed_lines.append('</p>')
-                in_paragraph = False
-            processed_lines.append('')
-            continue
-
-        # Skip lines that are already HTML tags
-        if stripped.startswith('<'):
-            if in_paragraph:
-                processed_lines.append('</p>')
-                in_paragraph = False
-            processed_lines.append(line)
-            continue
-
-        # Start or continue paragraph
-        if not in_paragraph:
-            processed_lines.append('<p>')
-            in_paragraph = True
-
-        processed_lines.append(line)
-
-    if in_paragraph:
-        processed_lines.append('</p>')
-
-    html = '\n'.join(processed_lines)
-
-    # Clean up multiple empty lines
-    html = re.sub(r'\n{3,}', '\n\n', html)
+    # Post-process: ensure images are wrapped in <p> tags (Medium requirement)
+    # The markdown library produces <p><img ...></p> by default for standalone images,
+    # but verify and fix any bare <img> tags
+    html = re.sub(
+        r'(?<!<p>)(<img [^>]+>)(?!</p>)',
+        r'<p>\1</p>',
+        html
+    )
 
     return html
 
@@ -149,8 +110,20 @@ def export_article_for_medium(
     with open(markdown_path, 'r', encoding='utf-8') as f:
         markdown_content = f.read()
 
-    # Convert to HTML
-    html_content = markdown_to_html(markdown_content, github_pages_base, repo_name)
+    # Convert markdown body to HTML
+    html_body = markdown_to_html(markdown_content, github_pages_base, repo_name)
+
+    # Wrap in full HTML document structure (required by Medium importer)
+    html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Rating Inflation</title>
+</head>
+<body>
+{html_body}
+</body>
+</html>"""
 
     # Generate unique filename
     article_name = markdown_path.stem  # e.g., "medium_draft"
