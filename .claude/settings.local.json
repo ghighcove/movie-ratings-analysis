@@ -18,7 +18,20 @@
       "Bash(git push:*)",
       "Bash(git commit:*)",
       "Bash(Correction\" - Ready for Medium publication with proper attribution.\n\nAll figures exported as 300 DPI PNG + PDF for publication.\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(tee:*)",
+      "Bash(timeout 2 tail:*)",
+      "Bash(del G:aidev_journaltmp_entry.md G:aidev_journaltmp_tldr.md G:aidev_journaltmp_linkedin.md G:aidev_journaltmp_scan.json G:aidev_journaltmp_active_projects.json G:aidev_journaltmp_existing_journal.md)",
+      "Bash(gh repo view:*)",
+      "Bash(gh api:*)",
+      "Bash(gh repo edit:*)",
+      "Bash(git log:*)",
+      "Bash(git -C \"G:\\\\ai\\\\entertainment_metrics\\\\ratings\" log --oneline -20)",
+      "Bash(git show:*)",
+      "Bash(git -C \"G:\\\\ai\\\\entertainment_metrics\\\\ratings\" remote -v)",
+      "Bash(git -C \"G:\\\\ai\\\\entertainment_metrics\\\\ratings\" status)",
+      "Bash(del \"G:\\\\ai\\\\entertainment_metrics\\\\ratings\\\\_verify.txt\")",
+      "Bash(test:*)"
     ]
   }
 }
