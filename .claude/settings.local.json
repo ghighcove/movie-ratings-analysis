@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(find:*)",
+      "WebSearch",
+      "Bash(python:*)",
+      "Bash(curl:*)",
+      "Bash(ping:*)",
+      "Bash(nslookup:*)",
+      "Bash(git init:*)",
+      "Bash(git branch:*)",
+      "Bash(gh auth:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}

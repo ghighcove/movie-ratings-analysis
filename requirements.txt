@@ -1,0 +1,24 @@
+# Movie Ratings Manipulation Analysis - Dependencies
+
+# Data Processing
+pandas>=2.0
+numpy>=1.24
+scipy>=1.11
+fastparquet>=2023.10
+
+# Data Acquisition
+requests>=2.31
+beautifulsoup4>=4.12
+
+# Visualization
+plotly>=5.17
+matplotlib>=3.7
+seaborn>=0.12
+
+# Utilities
+python-dateutil>=2.8
+tqdm>=4.66
+
+# Jupyter
+jupyter>=1.0
+ipykernel>=6.25
