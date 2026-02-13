@@ -232,6 +232,7 @@ The slight decline in some metrics (fewer suspicious genres, fewer genres with c
 While most metrics are stable, Benford's Law p-value **declined from 0.168 to 0.056**—approaching the 0.05 significance threshold. Vote count distributions are becoming increasingly unnatural, suggesting that even if rating inflation isn't worsening, the **artificiality of voting patterns** is.
 
 This could indicate:
+
 - More sophisticated vote coordination (hitting specific thresholds)
 - Increased use of bot farms or organized campaigns
 - Platform changes that inadvertently encourage unnatural voting patterns
@@ -269,6 +270,7 @@ If franchises were objectively superior, critics should agree. They don't. Rotte
 This divergence is suspicious. Critics and general audiences don't usually disagree systematically unless external factors influence one group. Professional critics are less susceptible to fan loyalty, marketing influence, and coordinated campaigns. When users diverge sharply from critical consensus specifically on franchises, it suggests those user ratings reflect something other than objective quality assessment.
 
 We also tested franchise quality using objective metrics:
+
 - **Awards recognition:** Franchise films don't win Best Picture, Best Director, or major acting Oscars at higher rates
 - **Long-term reputation:** Asking viewers to rank franchise vs. standalone films 10 years post-release shows convergence, not divergence
 - **Cross-platform comparison:** Letterboxd (a platform with different voting demographics) shows smaller franchise advantages
@@ -292,6 +294,7 @@ We also tested temporal patterns: if engagement naturally drives higher ratings,
 Our analysis covers **all 9,410 films** released 2019-2024 with ≥1,000 votes. We didn't select favorable examples—we analyzed the complete population and let statistical tests identify patterns.
 
 The p-values speak for themselves:
+
 - Franchise coordination: p<0.000002 (occurs by chance less than 1 in 500,000 trials)
 - Regional film patterns: Multiple examples exceed +1.5 boost threshold
 - Genre anomalies: p<0.001 for identified outliers
@@ -434,6 +437,7 @@ We cannot definitively prove this without insider access. But the patterns we ob
 **The Lack of Transparency Problem:**
 
 IMDb doesn't publish vote validation methods. We don't know:
+
 - How they detect bot accounts
 - How they weight votes by user history
 - Whether they penalize coordinated campaigns
@@ -473,6 +477,7 @@ The scale matters: IMDb gets 250+ million monthly visitors. Even a small percent
 For independent filmmakers, manipulated ratings create a rigged playing field. A genuinely excellent indie film rating 7.5 organically loses to a mediocre studio film rating 8.0 through coordination.
 
 This affects:
+
 - **Streaming acquisition:** Platforms pay premium prices for "highly rated" content, rewarding coordination over quality
 - **Festival selections:** Some festivals consider audience ratings in programming decisions
 - **Word-of-mouth:** Viewers discovering films through "highest rated" lists miss hidden gems buried below inflated studio films
