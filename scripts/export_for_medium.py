@@ -130,6 +130,8 @@ def export_article_for_medium(
     # Clean up the name if needed
     if article_name == "medium_draft":
         article_name = "rating_inflation"
+    elif article_name == "manipulation_article_draft":
+        article_name = "manipulation"
 
     filename = generate_unique_filename(article_name, html_content)
 
