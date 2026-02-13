@@ -110,6 +110,10 @@ def export_article_for_medium(
     with open(markdown_path, 'r', encoding='utf-8') as f:
         markdown_content = f.read()
 
+    # Extract title from first H1 heading
+    title_match = re.search(r'^# (.+)$', markdown_content, re.MULTILINE)
+    title = title_match.group(1) if title_match else "Article"
+
     # Convert markdown body to HTML
     html_body = markdown_to_html(markdown_content, github_pages_base, repo_name)
 
@@ -118,7 +122,7 @@ def export_article_for_medium(
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Rating Inflation</title>
+<title>{title}</title>
 </head>
 <body>
 {html_body}

@@ -72,9 +72,7 @@ To put these effect sizes in perspective: a Cohen's d of 0.75 is considered "lar
 We identified three layers of franchise coordination:
 
 1. **Organized Fan Campaigns:** Reddit threads with thousands of upvotes explicitly organizing opening weekend voting. A typical post: "Go rate [Film X] on IMDb—show [Studio] we want more!" with direct links to create accounts and vote. Discord servers coordinate "10/10 blitzes," treating rating as a form of tribal loyalty rather than film critique.
-
 2. **Studio Marketing Integration:** Studios don't need to explicitly say "manipulate ratings." But when marketing materials include calls to "share your excitement on IMDb" alongside strategic advanced screenings for superfans (who self-select as likely positive reviewers), the effect is predictable. It's plausible deniability by design.
-
 3. **Sustained Coordination:** Unlike a one-time review bomb, franchise coordination is *sustained*. Films maintain inflated ratings for months as fan communities continuously defend against "haters." We tracked multiple franchises where ratings stabilized 0.5-0.8 points above genre averages and stayed there—a pattern inconsistent with natural audience diversity.
 
 **Real-World Examples:**
