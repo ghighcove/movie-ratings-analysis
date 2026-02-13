@@ -244,34 +244,77 @@ If all 4 aren't true, it's not done. Don't optimize for your efficiency at the e
 
 That document is the **single source of truth** for all Medium platform rules. This section provides project-specific quick reference only.
 
-### Quick Workflow (this project)
+### Complete Automated Workflow (this project)
 
 **1. Export**:
 ```bash
-python scripts/export_for_medium.py article/medium_draft.md
+python scripts/export_for_medium.py article/manipulation_article_draft.md
 ```
+- Extracts title from markdown H1 (no hardcoded titles)
+- Converts markdown to HTML with proper list formatting (no blank lines between numbered items)
+- Generates unique timestamped filename for cache-busting
+- Converts figure URLs to GitHub Pages URLs
 
 **2. Push to GitHub** (triggers GitHub Pages rebuild):
 ```bash
-git add article/{unique_filename}.html figures/
+git add article/{unique_filename}.html figures/ article/*.md scripts/
 git commit -m "Add Medium export: {article_name}"
 git push origin main
 ```
 
-**3. Import to Medium** (after 30sec GitHub Pages rebuild):
-- URL: `https://medium.com/p/import`
-- Paste: `https://ghighcove.github.io/movie-ratings-analysis/article/{unique_filename}.html`
-- Tags: Data Analysis, Movies, IMDb, Statistics, Film Analysis
+**3. Verify GitHub Pages** (wait 30-45 seconds):
+```bash
+curl -I https://ghighcove.github.io/movie-ratings-analysis/article/{unique_filename}.html
+```
+Expected: HTTP 200, content-type: text/html
 
-**4. After publishing, archive for portfolio**:
+**4. Import to Medium via Browser Automation**:
+- Navigate to `https://medium.com/p/import`
+- Enter GitHub Pages URL
+- Click Import
+- Wait for import to complete (~5-10 seconds)
+- Verify: title/attribution separated, figures render, numbered lists display correctly
+
+**5. Complete SEO Fields**:
+- **Tags** (5 max): Data Analysis, Movies, IMDb, Statistics, Film Analysis
+- **Preview Image**: Verify figure from article displays (or upload custom)
+- **Subtitle**: Auto-populated from attribution block (verify under 140 chars)
+
+**6. Prompt User for Schedule Date**:
+**IMPORTANT**: Always ask: *"What date would you like to schedule this article for?"*
+- Do NOT assume a date
+- Accept format: MM/DD, MM/DD/YYYY, or "publish now"
+
+**7. Schedule Article**:
+- Click "Schedule for later"
+- Select user-specified date in calendar
+- Choose time (default or user preference)
+- Click "Schedule to publish"
+- Verify: Article shows as "Scheduled" in drafts
+
+**8. After publication, archive for portfolio**:
 ```bash
 python G:/ai/medium-publishing-standards/tools/archive_article.py \
-  --source="G:/ai/entertainment_metrics/ratings/article/medium_draft.md" \
-  --medium-url="https://medium.com/..." \
+  --source="G:/ai/entertainment_metrics/ratings/article/{article_file}.md" \
+  --medium-url="https://medium.com/@ghighcove/{slug}" \
   --project="ratings" \
-  --title="Article Title" \
-  --geo-score="97"
+  --title="{Article Title}" \
+  --geo-score="98"
 ```
+
+### Common Issues & Fixes
+
+**Numbered lists showing blank bullets:**
+- **Cause**: Blank lines between numbered list items cause markdown parser to wrap each in `<p>` tags
+- **Fix**: Remove blank lines between `1. `, `2. `, `3. ` items in source markdown
+
+**Title mixed with attribution:**
+- **Cause**: Export script using hardcoded title instead of extracting from H1
+- **Fix**: Ensure `export_for_medium.py` extracts title with `re.search(r'^# (.+)$', markdown_content, re.MULTILINE)`
+
+**Figures not rendering:**
+- **Cause**: Using `raw.githubusercontent.com` (returns text/plain) instead of GitHub Pages
+- **Fix**: Always use `ghighcove.github.io/movie-ratings-analysis/` URLs
 
 ### Critical Rules (see STANDARDS.md for full details)
 
