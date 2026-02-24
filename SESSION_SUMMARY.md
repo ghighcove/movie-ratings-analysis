@@ -147,7 +147,7 @@ All figures saved to `figures/` as PNG (300 DPI) + PDF:
 ## 📦 Repository Structure
 
 ```
-G:/ai/entertainment_metrics/ratings/
+movie-ratings-analysis/
 ├── article/
 │   └── medium_draft.md          # Publication-ready article
 ├── data/

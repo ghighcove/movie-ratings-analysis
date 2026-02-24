@@ -146,7 +146,7 @@ value_score = objective_quality_zscore - current_rating_zscore
 ## Reference Projects
 
 ### NFL Value Scoring (Primary Template)
-- **Location**: `G:/ai/nfl/`
+- **Location**: https://github.com/ghighcove/nfl-salary-analysis
 - **Key modules to adapt**:
   - `src/data_loader.py` - Caching pattern
   - `src/value_score.py` - Scoring methodology
@@ -240,7 +240,7 @@ If all 4 aren't true, it's not done. Don't optimize for your efficiency at the e
 
 ## Medium Publishing Workflow
 
-**MANDATORY**: Read `G:\ai\medium-publishing-standards\STANDARDS.md` before any Medium work.
+**MANDATORY**: Read `medium-publishing-standards/STANDARDS.md` (https://github.com/ghighcove/medium-publishing-standards) before any Medium work.
 
 That document is the **single source of truth** for all Medium platform rules. This section provides project-specific quick reference only.
 
@@ -294,8 +294,8 @@ Expected: HTTP 200, content-type: text/html
 
 **8. After publication, archive for portfolio**:
 ```bash
-python G:/ai/medium-publishing-standards/tools/archive_article.py \
-  --source="G:/ai/entertainment_metrics/ratings/article/{article_file}.md" \
+python medium-publishing-standards/tools/archive_article.py \
+  --source="article/{article_file}.md" \
   --medium-url="https://medium.com/@ghighcove/{slug}" \
   --project="ratings" \
   --title="{Article Title}" \
@@ -323,6 +323,28 @@ python G:/ai/medium-publishing-standards/tools/archive_article.py \
 - ✅ GitHub Pages URLs (not raw.githubusercontent.com)
 - ✅ Full HTML document structure (DOCTYPE, html, head, body)
 - ✅ Python `markdown` library (not regex)
+
+### SEO Description Rules (CRITICAL)
+
+**Medium SEO Description Field: 140 characters MAX**
+
+**Balance Required: 50% SEO + 50% GEO**
+- **50% SEO**: Include searchable keywords (IMDb, ratings, movies, data analysis, manipulation, etc.)
+- **50% GEO**: Use language that signals intellectual depth to attract smart readers and LLMs
+  - Terms like "statistical analysis", "systematic", "evidence-based", "implications", "methodology"
+  - Avoid clickbait language ("You won't believe...", "Shocking truth...")
+  - Signal rigor and analytical approach
+
+**Target Audience**: Sophisticated, analytically-minded readers who appreciate methodology
+
+**Example** (139 chars):
+```
+Statistical analysis of 9,410 films exposes systematic IMDb manipulation: franchise coordination, nationalist inflation, consumer implications
+```
+
+This balances:
+- SEO: "statistical analysis", "IMDb", "films", "manipulation"
+- GEO: "systematic", "exposes", "coordination", "implications" (signals depth)
 
 ## Success Metrics
 

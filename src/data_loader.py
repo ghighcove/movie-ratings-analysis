@@ -1,7 +1,7 @@
 """
 Data loading and caching for IMDb datasets, TMDb API, and historical lists.
 
-Adapted from G:/ai/nfl/src/data_loader.py caching pattern.
+Adapted from nfl-salary-analysis/src/data_loader.py caching pattern.
 """
 
 import gzip

@@ -32,7 +32,7 @@ Adapt the NFL value-scoring framework where:
 ## Project Structure
 
 ```
-G:/ai/entertainment_metrics/ratings/
+movie-ratings-analysis/
 ├── data/
 │   ├── raw/           # IMDb TSV files, list archives
 │   ├── processed/     # Parquet files (master dataset, quality metrics)
@@ -59,7 +59,7 @@ G:/ai/entertainment_metrics/ratings/
 ## Installation
 
 ```bash
-cd G:/ai/entertainment_metrics/ratings
+cd movie-ratings-analysis
 pip install -r requirements.txt
 ```
 
@@ -89,7 +89,7 @@ print(f"Films with 10k+ votes: {(master['num_votes'] >= 10000).sum():,}")
 
 ## Reference
 
-This project adapts the methodology from [NFL Player Value Analysis](G:/ai/nfl/), applying value-scoring concepts to film ratings.
+This project adapts the methodology from [NFL Player Value Analysis](https://github.com/ghighcove/nfl-salary-analysis), applying value-scoring concepts to film ratings.
 
 ## Status
 
